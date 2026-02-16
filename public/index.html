@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classroom Client - Join</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Join Class</h1>
+
+      <form id="join-form">
+        <div class="input-group">
+          <label for="uid">Name</label>
+          <input
+            type="text"
+            id="uid"
+            name="uid"
+            required
+            placeholder="Enter your name"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>
+            <input type="checkbox" id="consent" required />
+            I agree to send my system data for academic purposes
+          </label>
+        </div>
+        <button type="submit">Join Class</button>
+        <div id="message" class="error"></div>
+      </form>
+    </div>
+    <script src="client.js"></script>
+  </body>
+</html>
