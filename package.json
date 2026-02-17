@@ -1,8 +1,11 @@
 {
-  "name": "codeland",
-  "version": "1.0.0",
-  "description": "Codeland works to bridge the gap between trainer and students",
+  "name": "coderland",
+  "version": "1.0.1",
+  "description": "Coderland works to bridge the gap between trainer and students",
   "main": "index.js",
+  "bin": {
+    "coderland": "./index.js"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -10,10 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/programmerrush/codeland.git"
+    "url": "git+https://github.com/programmerrush/coderland.git"
   },
   "keywords": [
-    "codeland",
+    "coderland",
     "client",
     "collaboration",
     "student",
@@ -22,9 +25,9 @@
   "author": "Rushikesh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/programmerrush/codeland/issues"
+    "url": "https://github.com/programmerrush/coderland/issues"
   },
-  "homepage": "https://github.com/programmerrush/codeland#readme",
+  "homepage": "https://github.com/programmerrush/coderland#readme",
   "dependencies": {
     "dotenv": "^16.3.1",
     "express": "^4.18.2",

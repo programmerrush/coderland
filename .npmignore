@@ -1,3 +1,5 @@
 nodemon.json
 .formatted
 .env
+.npmrc
+node_modules
