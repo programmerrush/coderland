@@ -31,23 +31,33 @@ app.get("/dashboard", (req, res) => {
 
 const readline = require("readline");
 
-// Interactive startup to get Server URL
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-// (default: ${config.serverUrl})
-rl.question(`Enter Server URL : `, (url) => {
-  if (url && url.trim()) {
-    config.serverUrl = url.trim().replace(/\/$/, "");
-  }
-
-  console.log(`Using Server URL: ${config.serverUrl}`);
-  rl.close();
-
-  // Start server after configuration
+// Function to start the server
+const startServer = () => {
   app.listen(config.port, () => {
     logger.info(`Client running on http://localhost:${config.port}`);
     // logger.info(`Connected to Server at: ${config.serverUrl}`);
   });
-});
+};
+
+// If Server URL is provided via env/config, skip interactive prompt
+if (config.serverUrl) {
+  console.log(`Using Server URL from config: ${config.serverUrl}`);
+  startServer();
+} else {
+  // Interactive startup to get Server URL
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  rl.question(`Enter Server URL : `, (url) => {
+    if (url && url.trim()) {
+      config.serverUrl = url.trim().replace(/\/$/, "");
+    }
+
+    console.log(`Using Server URL: ${config.serverUrl}`);
+    rl.close();
+
+    startServer();
+  });
+}
