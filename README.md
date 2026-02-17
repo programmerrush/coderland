@@ -1,16 +1,16 @@
-# Codeland Client Application
+# Coderland Client Application
 
-A client application for Codeland.
+A client application for Coderland.
 
 ## Installation
 
 ```bash
-npm install codeland
+npm install coderland
 ```
 
 ## Usage
 
 ```javascript
-const codeland = require("codeland");
+const coderland = require("coderland");
 // usage here
 ```
