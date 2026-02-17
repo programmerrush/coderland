@@ -3,3 +3,8 @@ nodemon.json
 .env
 .npmrc
 node_modules
+Dockerfile
+.dockerignore
+.gitignore
+.git
+.npmignore
