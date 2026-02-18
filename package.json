@@ -11,6 +11,10 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+  "codeland": "./index.js"
+  },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/programmerrush/coderland.git"
