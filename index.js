@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 const express = require("express");
 const path = require("path");
-<<<<<<< HEAD
 const fs = require("fs");
 const os = require("os");
 const inquirer = require("inquirer").default;
 
 
-=======
->>>>>>> parent of 870baf4 (Added Python Version Check)
+
 const config = require("./config");
 const logger = require("./utils/logger.util");
 
@@ -37,11 +35,8 @@ app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
-<<<<<<< HEAD
 
-=======
-const readline = require("readline");
->>>>>>> parent of 870baf4 (Added Python Version Check)
+
 
 // Function to start the server
 const startServer = () => {
@@ -61,7 +56,7 @@ function readLinks() {
     return [];
   }
 }
-<<<<<<< HEAD
+
 
 
 function saveLinks(links) {
@@ -134,7 +129,3 @@ async function chooseServerUrl() {
     }
   }
 })();
-
-
-=======
->>>>>>> parent of 870baf4 (Added Python Version Check)
