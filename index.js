@@ -30,19 +30,80 @@ app.get("/dashboard", (req, res) => {
 });
 
 const readline = require("readline");
+const { exec } = require("child_process");
+const { version } = require("./package.json");
 
-// Function to start the server
-const startServer = () => {
-  app.listen(config.port, () => {
-    logger.info(`Client running on http://localhost:${config.port}`);
-    // logger.info(`Connected to Server at: ${config.serverUrl}`);
+// Parse command-line arguments
+const args = process.argv.slice(2);
+
+// --version flag
+if (args.includes("--version") || args.includes("-v")) {
+  console.log(`coderland v${version}`);
+  process.exit(0);
+}
+
+// --help flag
+if (args.includes("--help") || args.includes("-h")) {
+  console.log(`
+  coderland v${version}
+
+  Usage:
+    coderland [options]
+
+  Options:
+    --url <url>      Set the server URL and open the browser
+    --version, -v    Show the current version
+    --help, -h       Show this help message
+
+  Examples:
+    coderland --url https://myserver.com/abc
+  `);
+  process.exit(0);
+}
+
+// Parse --url from command-line arguments or npm config
+const urlFlagIndex = args.indexOf("--url");
+const argUrl =
+  urlFlagIndex !== -1 && args[urlFlagIndex + 1]
+    ? args[urlFlagIndex + 1].trim()
+    : null;
+// npm start --url=VALUE sets process.env.npm_config_url
+const npmUrl = process.env.npm_config_url || null;
+const cliUrl = argUrl || npmUrl ? (argUrl || npmUrl).replace(/\/$/, "") : null;
+
+if (cliUrl) {
+  config.serverUrl = cliUrl;
+}
+
+// Open URL in the default browser
+const openInBrowser = (url) => {
+  const platform = process.platform;
+  const cmd =
+    platform === "win32"
+      ? `start ${url}`
+      : platform === "darwin"
+        ? `open ${url}`
+        : `xdg-open ${url}`;
+  exec(cmd, (err) => {
+    if (err) logger.error(`Failed to open browser: ${err.message}`);
   });
 };
 
-// If Server URL is provided via env/config, skip interactive prompt
+// Function to start the server
+const startServer = (autoOpen = false) => {
+  app.listen(config.port, () => {
+    logger.info(`Client running on http://localhost:${config.port}`);
+    // logger.info(`Connected to Server at: ${config.serverUrl}`);
+    if (autoOpen) {
+      openInBrowser(`http://localhost:${config.port}`);
+    }
+  });
+};
+
+// If Server URL is provided via --url flag or env/config, skip interactive prompt
 if (config.serverUrl) {
-  console.log(`Using Server URL from config: ${config.serverUrl}`);
-  startServer();
+  console.log(`Using Server URL: ${config.serverUrl}`);
+  startServer(!!cliUrl);
 } else {
   // Interactive startup to get Server URL
   const rl = readline.createInterface({
