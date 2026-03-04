@@ -18,23 +18,65 @@ document.addEventListener("DOMContentLoaded", async () => {
   // --- JOIN PAGE LOGIC (index.html) ---
   const joinForm = document.getElementById("join-form");
   if (joinForm) {
+    const serverUrlInput = document.getElementById("server-url");
+    const urlStatus = document.getElementById("url-status");
+
+    // Fetch current server URL config
+    try {
+      const configRes = await fetch("/api/system/config");
+      const configData = await configRes.json();
+      if (configData.serverUrl) {
+        serverUrlInput.value = configData.serverUrl;
+        serverUrlInput.disabled = true;
+        urlStatus.textContent = "Server URL set via CLI";
+        urlStatus.className = "info success";
+      }
+    } catch (err) {
+      console.error("Failed to fetch config:", err);
+    }
+
     joinForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      const serverUrl = serverUrlInput.value.trim().replace(/\/$/, "");
       const uid = document.getElementById("uid").value;
-      // Removed classCode input, handled by backend default
       const consent = document.getElementById("consent").checked;
       const msgEl = document.getElementById("message");
 
-      if (!consent) {
-        msgEl.textContent = "You must agree to continue.";
+      if (!serverUrl) {
+        msgEl.textContent = "Please enter the server URL.";
+        msgEl.className = "error";
         return;
       }
 
+      if (!consent) {
+        msgEl.textContent = "You must agree to continue.";
+        msgEl.className = "error";
+        return;
+      }
+
+      msgEl.textContent = "Connecting to server...";
+      msgEl.className = "info";
+
       try {
+        // Set the server URL on backend
+        const urlRes = await fetch("/api/system/server-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ serverUrl }),
+        });
+        const urlData = await urlRes.json();
+
+        if (!urlData.success) {
+          msgEl.textContent = urlData.message || "Failed to connect to server.";
+          msgEl.className = "error";
+          return;
+        }
+
+        // Now join the class
         const res = await fetch("/api/auth/join", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uid, consent }), // Removed classCode from body
+          body: JSON.stringify({ uid, consent }),
         });
         const data = await res.json();
 
@@ -46,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       } catch (err) {
         msgEl.textContent = "Error connecting to server.";
+        msgEl.className = "error";
       }
     });
   }

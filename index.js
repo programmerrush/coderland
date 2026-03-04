@@ -29,7 +29,6 @@ app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
-const readline = require("readline");
 const { exec } = require("child_process");
 const { version } = require("./package.json");
 
@@ -100,25 +99,8 @@ const startServer = (autoOpen = false) => {
   });
 };
 
-// If Server URL is provided via --url flag or env/config, skip interactive prompt
+// Always start the server and open the browser
 if (config.serverUrl) {
   console.log(`Using Server URL: ${config.serverUrl}`);
-  startServer(!!cliUrl);
-} else {
-  // Interactive startup to get Server URL
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  rl.question(`Enter Server URL : `, (url) => {
-    if (url && url.trim()) {
-      config.serverUrl = url.trim().replace(/\/$/, "");
-    }
-
-    console.log(`Using Server URL: ${config.serverUrl}`);
-    rl.close();
-
-    startServer();
-  });
 }
+startServer(true);
