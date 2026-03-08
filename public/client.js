@@ -1,5 +1,34 @@
 // Client-side shared logic
 
+// Convert URLs in text to clickable anchor tags
+function linkify(text) {
+  const urlPattern = /(https?:\/\/[^\s<]+)/g;
+  return text.replace(urlPattern, (url) => {
+    const escaped = url
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+    return `<a href="${escaped}" target="_blank" rel="noopener noreferrer">${escaped}</a>`;
+  });
+}
+
+// Escape HTML to prevent XSS, then linkify
+function safelinkify(text) {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+  // Now convert URLs in the escaped text to links
+  const urlPattern = /(https?:\/\/[^\s&<]+(?:&amp;[^\s&<]+)*)/g;
+  return escaped.replace(urlPattern, (url) => {
+    const href = url.replace(/&amp;/g, "&");
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+}
+
 // Helper Status Fetcher
 async function getStatus() {
   try {
@@ -116,7 +145,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             div.className = "message-item";
 
             const text = document.createElement("div");
-            text.textContent = msg.text;
+            text.className = "message-text";
+            text.innerHTML = safelinkify(msg.text);
 
             const time = document.createElement("span");
             time.className = "message-time";
@@ -128,7 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           });
         } else {
           msgContainer.innerHTML =
-            '<div style="color: #666;">No messages from trainer.</div>';
+            '<div class="no-messages">No messages from trainer yet.</div>';
         }
       } catch (err) {
         msgContainer.innerHTML =
